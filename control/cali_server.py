@@ -7,6 +7,8 @@ from socket import *
 from time import ctime          # Import necessary modules   
 from sonar_front import *
 from sonar_side import *
+import dir_control
+dir_count = 5
 
 HOST = ''           # The variable of HOST is null, so the function bind( ) can be bound to all valid addresses.
 PORT = 21567
@@ -19,7 +21,7 @@ tcpSerSock.listen(5)     # The parameter of listen() defines the number of conne
                          # connections are full, others will be rejected. 
 
 frontSonar = SonarFront()
-#sideSonar = SonarSide()
+sideSonar = SonarSide()
 
 def setup():
 	global offset_x,  offset_y, offset, forward0, forward1
@@ -62,6 +64,7 @@ def REVERSE(x):
 def loop():
 	global offset_x, offset_y, offset, forward0, forward1
 	global frontSonar , sideSonar
+	global dir_count
 	motor.setup() 
 	while True:
 		print 'Waiting for connection...'
@@ -74,8 +77,9 @@ def loop():
 		while True:
 			motor.stop()
 		while True:
-			#sideDist = sideSonar.MeasureDistance()
+			sideDist = sideSonar.MeasureDistance()
 			frontDist= frontSonar.MeasureDistance()
+			print 'Side Dist=' + str(sideDist)
 			print 'Distance=' + str(frontDist)
 			if frontDist<20:			
 				print 'motor shuloud stop'			
@@ -84,6 +88,14 @@ def loop():
 				motor.setSpeed(50)
 				motor.motor0(forward0)
 				motor.motor1(forward1)
+			if sideDist > 5 :
+				dir_count = dir_count  - 0.1
+			elif sideDist < 3:
+				dir_count = dir_count + 0.1
+			else :
+				dir_count = 5.0;
+			dir_control.motor_dir(dir_count)
+				
 			
 		while True:
 			data = tcpCliSock.recv(BUFSIZ)    # Receive data sent from the client. 

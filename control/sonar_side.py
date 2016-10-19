@@ -31,8 +31,8 @@ class SonarSide:
 		elapsed = stop - start
 		self.distance = elapsed * 34000
 		self.distance = self.distance / 2
-		print str(self.distance)
-		GPIO.cleanup()
+		#print str(self.distance)
+		#GPIO.cleanup()
 		return self.distance
 
 if __name__ == '__main__':
