@@ -12,12 +12,16 @@ import RPi.GPIO as GPIO
 class SonarFront:
 	def __init__(self):
 		self.distanec = 0
-		self.GPIO_TRIGGER = 23
-		self.GPIO_ECHO = 24
-		GPIO.setmode(GPIO.BCM)
+		self.GPIO_TRIGGER = 16
+		self.GPIO_ECHO = 18
+		GPIO.setmode(GPIO.BOARD)
+		GPIO.setwarnings(False)
 		GPIO.setup(self.GPIO_TRIGGER,GPIO.OUT)
 		GPIO.setup(self.GPIO_ECHO,GPIO.IN)
 	def MeasureDistance(self):
+		GPIO.setup(self.GPIO_TRIGGER,GPIO.OUT)
+		GPIO.setup(self.GPIO_ECHO,GPIO.IN)
+
 		GPIO.output(self.GPIO_TRIGGER,False)
 		time.sleep(0.5)
 		GPIO.output(self.GPIO_TRIGGER, True)
@@ -31,8 +35,8 @@ class SonarFront:
 		elapsed = stop - start
 		self.distance = elapsed * 34000
 		self.distance = self.distance / 2
-		print str(self.distance)
-		GPIO.cleanup()
+		#print str(self.distance)
+		#GPIO.cleanup()
 		return self.distance
 
 if __name__ == '__main__':

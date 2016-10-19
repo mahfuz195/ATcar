@@ -12,9 +12,9 @@ import RPi.GPIO as GPIO
 class SonarSide:
 	def __init__(self):
 		self.distanec = 0
-		self.GPIO_TRIGGER = 5
-		self.GPIO_ECHO = 6
-		GPIO.setmode(GPIO.BCM)
+		self.GPIO_TRIGGER = 29
+		self.GPIO_ECHO = 31
+		GPIO.setmode(GPIO.BOARD)
 		GPIO.setup(self.GPIO_TRIGGER,GPIO.OUT)
 		GPIO.setup(self.GPIO_ECHO,GPIO.IN)
 	def MeasureDistance(self):
