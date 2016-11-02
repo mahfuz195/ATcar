@@ -64,14 +64,33 @@ def REVERSE(x):
 	elif x == 'False':
 		return 'True'
 def dir_test():
+        currDist = frontSonar.MeasureDistance()
+        dDist = 10
+        prevDist = currDist
+        theta = 5
+        desDist = 30
+
+        dir_control.motor_dir(theta)
+        
+        motor.setSpeed(50)
+	motor.motor0(forward0)
+	motor.motor1(forward1)
+	
 	while True:
-		frontDist= frontSonar.MeasureDistance()
-		time.sleep()
+		time.sleep(1)
+		curDist= frontSonar.MeasureDistance()
+		prevDist , theta = calculateDir(prevDist,curDist,theta,desDist,dDist)
+		dir_control.motor_dir(theta)
+		
+                
 def loop():
 	global offset_x, offset_y, offset, forward0, forward1
 	global frontSonar , sideSonar
 	global dir_count
-	motor.setup() 
+	motor.setup()
+
+	dir_test()
+	
 	while True:
 		print 'Waiting for connection...'
 		# Waiting for connection. Once receiving a connection, the function accept() returns a separate 
