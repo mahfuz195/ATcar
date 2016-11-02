@@ -8,6 +8,9 @@ from time import ctime          # Import necessary modules
 from sonar_front import *
 from sonar_side import *
 import dir_control
+import math
+import updated_dir_control
+
 dir_count = 5
 
 HOST = ''           # The variable of HOST is null, so the function bind( ) can be bound to all valid addresses.
@@ -60,7 +63,10 @@ def REVERSE(x):
 		return 'False'
 	elif x == 'False':
 		return 'True'
-
+def dir_test():
+	while True:
+		frontDist= frontSonar.MeasureDistance()
+		time.sleep()
 def loop():
 	global offset_x, offset_y, offset, forward0, forward1
 	global frontSonar , sideSonar
@@ -74,28 +80,77 @@ def loop():
 		#tcpCliSock, addr = tcpSerSock.accept() 
 		#print '...connected from :', addr     # Print the IP address of the client connected with the server.
 		# this part is for testing 
-		while True:
+		while False:
 			motor.stop()
+		current_t2 = time.time()
+		old_t1 = current_t2
+		y2 = 0 
+		y1 = y2
+		angel = 5
+		turn = 0 
+
 		while True:
 			sideDist = sideSonar.MeasureDistance()
 			frontDist= frontSonar.MeasureDistance()
-			print 'Side Dist=' + str(sideDist)
-			print 'Distance=' + str(frontDist)
+
+			if turn  == -1 :
+				if sideDist < 10 : 
+					dir_count = 5 ; 
+					dir_control.motor_dir(dir_count)
+				
+			y2 = int(sideDist)
+			current_t2 = time.time()			
+			if y2 != y1:
+				if current_t2 != old_t1 :
+					angel = math.degrees(math.atan((y2-y1)/(current_t2-old_t1)))
+					if (angel) >10 or (angel)<-10: 
+						dir_count = 5 - int(angel / 10)
+						print 'angel = ' + str(angel) + ' motor dir = ' + str(dir_count)
+						dir_control.motor_dir(dir_count)
+						if dir_control == 5 :
+							turn  = 0 
+						elif dir_count < 5 : 
+							trun = -1 
+						else :
+							turn  = 1
+						old_t2 = current_t2
+						y1 = y2 
+			#print 'Distance=' + str(frontDist)
 			if frontDist<20:			
-				print 'motor shuloud stop'			
+				#print 'motor shuloud stop'			
 				motor.stop()
 			else :
-				motor.setSpeed(50)
-				motor.motor0(forward0)
-				motor.motor1(forward1)
-			if sideDist > 5 :
-				dir_count = dir_count  - 0.1
-			elif sideDist < 3:
-				dir_count = dir_count + 0.1
+				motor.stop()
+				#motor.setSpeed(50)
+				#motor.motor0(forward0)
+				#motor.motor1(forward1)
+			if sideDist == 0 :
+				print 'wrong value'
+				dir_control.motor_dir(5)			
+			elif sideDist > 15:
+				if dir_count > 2:
+					print 'a'					
+					#dir_count = dir_count  - 1
+					#dir_control.motor_dir(dir_count)
+					#dir_count = 5 
+					#dir_control.motor_dir(dir_count)
+			elif sideDist < 8:
+				if dir_count < 9 :
+					print 'b'
+					#dir_count = dir_count + 1
+					#dir_control.motor_dir(dir_count)
+					#dir_count = 5 
+					#dir_control.motor_dir(dir_count)
+			elif sideDist > 40:
+				motor.stop()
 			else :
-				dir_count = 5.0;
-			dir_control.motor_dir(dir_count)
-				
+				print 'c'
+				#dir_count = 5;
+				#dir_control.motor_dir(dir_count)
+
+			#print 'Side Dist=' + str(sideDist) + " = " + str(dir_count)
+			print 'Side Dist = '  + str(int(sideDist))			
+							
 			
 		while True:
 			data = tcpCliSock.recv(BUFSIZ)    # Receive data sent from the client. 

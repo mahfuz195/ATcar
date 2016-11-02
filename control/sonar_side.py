@@ -18,6 +18,7 @@ class SonarSide:
 		GPIO.setup(self.GPIO_TRIGGER,GPIO.OUT)
 		GPIO.setup(self.GPIO_ECHO,GPIO.IN)
 	def MeasureDistance(self):
+		start = time.time()
 		GPIO.output(self.GPIO_TRIGGER,False)
 		time.sleep(0.5)
 		GPIO.output(self.GPIO_TRIGGER, True)
@@ -33,6 +34,10 @@ class SonarSide:
 		self.distance = self.distance / 2
 		#print str(self.distance)
 		#GPIO.cleanup()
+		end = time.time()
+		#print 'time dif = ' + str((end-start)*1000) + ' ms'
+		if self.distance>100:
+			return 0
 		return self.distance
 
 if __name__ == '__main__':
