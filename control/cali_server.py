@@ -64,11 +64,12 @@ def REVERSE(x):
 	elif x == 'False':
 		return 'True'
 def dir_test():
-        currDist = frontSonar.MeasureDistance()
-        dDist = 10
+        global frontSonar , sideSonar
+        currDist = sideSonar.MeasureDistance()
+	dDist = 10
         prevDist = currDist
         theta = 5
-        desDist = 30
+        desDist = 20
 
         dir_control.motor_dir(theta)
         
@@ -77,11 +78,16 @@ def dir_test():
 	motor.motor1(forward1)
 	
 	while True:
-		time.sleep(1)
-		curDist= frontSonar.MeasureDistance()
+       		motor.setSpeed(50)
+		motor.motor0(forward0)
+		motor.motor1(forward1)
+		time.sleep(0.5)
+		motor.stop()
+		curDist= sideSonar.MeasureDistance()
 		prevDist , theta = updated_dir_control.calculateDir(prevDist,curDist,theta,desDist,dDist)
 		dir_control.motor_dir(theta)
-		
+		print str(theta) 
+		time.sleep(5)
                 
 def loop():
 	global offset_x, offset_y, offset, forward0, forward1
@@ -89,6 +95,9 @@ def loop():
 	global dir_count
 	motor.setup()
 
+	
+	#while True:
+	#	motor.stop()
 	dir_test()
 	
 	while True:
