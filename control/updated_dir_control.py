@@ -1,4 +1,7 @@
 import time
+def thetaInc(prevDist, curDist , delT):
+    deg = math.degrees(math.atan((curDist-prevDist)/(5.0)))
+    return deg  
 def calculateDir(prevDist , curDist, theta , desDist , dDist):
     turn = 0 
     if curDist > prevDist:
@@ -18,14 +21,14 @@ def calculateDir(prevDist , curDist, theta , desDist , dDist):
             print 'keep going out'
         elif (curDist > (desDist+dDist)):
             print 'reduce theta'
-            theta = theta - 2
+            theta = theta - thetaInc(curDist,prevDist,0) 
    
     elif (turn == -1):  #going in
         if( curDist > desDist) and (curDist < (desDist+dDist)):
             print 'in line: IN'
         elif (curDist < desDist):
             print 'increase theta'
-            theta = theta + 2 
+            theta = theta + thetaInc(curDist,prevDist,0) 
         elif (curDist > (desDist+dDist)):
             print 'keep going in'
 
