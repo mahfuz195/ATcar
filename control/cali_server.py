@@ -79,7 +79,7 @@ def dir_test():
 	while True:
 		time.sleep(1)
 		curDist= frontSonar.MeasureDistance()
-		prevDist , theta = calculateDir(prevDist,curDist,theta,desDist,dDist)
+		prevDist , theta = updated_dir_control.calculateDir(prevDist,curDist,theta,desDist,dDist)
 		dir_control.motor_dir(theta)
 		
                 
