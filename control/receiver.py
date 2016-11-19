@@ -1,12 +1,27 @@
+#!/usr/bin/env python
 import socket
 import re
+import RPi.GPIO as GPIO
+import car_dir
+import motor
+from time import ctime          # Import necessary modules
+import time
+import select
+import threading
+
+#init classes
+car_dir.setup()
+motor.setup()     # Initialize the Raspberry Pi GPIO connected to the DC motor. 
+car_dir.home()
+motor.forward()
 
 def ParseVehicleData(data):
     if data.find('$') != -1 and data.find('#') != -1:
         #vid , dtime , speed , angle , headway = data.split(' $#,')
-        vid , dtime , speed , angle , headway = filter(None,re.split("[,\-!$#]",data))
-        print 'vid=' + str(vid) + ' time=' + str(dtime) + ' speed' + str(speed)
+        return filter(None,re.split("[,\-!$#]",data))
         #print 'time='
+    else :
+        return [0,0,0,0,0]
         
 def receiver():
     try:
@@ -18,10 +33,17 @@ def receiver():
         print ('start service ...')
         
         while True :
-            message , address = my_socket.recvfrom(8192)
-            ParseVehicleData
-            print 'message:'+ str(message) + ' from :', address[0]
-            
+            #message , address = my_socket.recvfrom(8192)
+            #this is for testing
+            message = "$1,20.3,24,90,61.2#"
+            vid , dtime , speed , angle , headway = ParseVehicleData(message)
+            print 'vid=' + str(vid) + ' time=' + str(dtime) + ' speed=' + str(speed)
+            if int(vid) == 1 :
+                print 'data from leader!'
+                if float(dtime) != 0 :
+                    print 'set speed = ' + str(speed)
+                    motor.setSpeed(int(0))
+                   
     except:
         print 'exception in comm::receiver()'
                 
