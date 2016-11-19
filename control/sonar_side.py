@@ -36,8 +36,8 @@ class SonarSide:
 		#GPIO.cleanup()
 		end = time.time()
 		#print 'time dif = ' + str((end-start)*1000) + ' ms'
-		if self.distance>100:
-			return 0
+		#if self.distance>100:
+		#	return 0
 		return self.distance
 
 if __name__ == '__main__':
