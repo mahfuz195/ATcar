@@ -60,15 +60,27 @@ def test2():
                 time.sleep(3)
                 turn(90)
                 time.sleep(3)
+                print 'turn 0'
+                turn(0)
+                time.sleep(3)
+                print 'turn 45'
+                turn(45)
+                time.sleep(3)
+                print 'turn 360'
+                turn(360)
+                time.sleep(3)
+                
 def test():
 	while True:
-		print 'Turn Left!'
-		turn_left()
+		print 'Turn right!'
+		#turn(0)
+		#time.slpee
+		turn_right()
 		time.sleep(3)
 		print 'Home!'
 		home()
 		time.sleep(3)
-		print 'Turn Right!'
+		print 'Turn left!'
 		turn_left();		
 		time.sleep(3)
 		print 'Home!'		
@@ -81,6 +93,6 @@ def test():
 if __name__ == '__main__':
 	setup()
 	home()
-	test()
+	test2()
 
 

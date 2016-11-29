@@ -30,6 +30,8 @@ def setup():
         home_y = Ymin + 80
         pwm = servo.PWM()           # Initialize the servo controller. 
 
+        print 'offset:' + str(offset_y)
+
 # ==========================================================================================
 # Control the servo connected to channel 14 of the servo control board to make the camera 
 # turning towards the positive direction of the x axis.
@@ -86,6 +88,10 @@ def calibrate(x,y):
         pwm.set_value(14, 0, (MaxPulse+MinPulse)/2+x)
         pwm.set_value(15, 0, (MaxPulse+MinPulse)/2+y)
 
+def setAngle():
+        print 'in angle'
+        pwm.set_value(14, 0, Current_x)
+        
 def test():
         while True:
                 home_x_y()
@@ -97,9 +103,23 @@ def test():
                 for i in range(0, 9):
                         move_decrease_x()
                         #move_decrease_y()
+                for i in range(1, 10):
+                        print str(i)
+                        #move_increase_x()
+                        move_increase_y()
+                        time.sleep(0.5)
+                for i in range(1, 10):
+                        print str(i)
+                        #move_decrease_x()
+                        move_decrease_y()
                         time.sleep(0.5)
 
 if __name__ == '__main__':
         setup()
         home_x_y()
         #test()
+        for i in range(0,5):
+                move_increase_y()
+                time.sleep(0.5)
+        
+        test()
