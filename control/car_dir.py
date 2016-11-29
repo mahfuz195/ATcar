@@ -52,6 +52,14 @@ def home():
 def calibrate(x):
 	pwm.set_value(0, 0, 450+x)
 
+def test2():
+        while True:
+                turn(0)
+                time.sleep(3)
+                turn(45)
+                time.sleep(3)
+                turn(90)
+                time.sleep(3)
 def test():
 	while True:
 		print 'Turn Left!'

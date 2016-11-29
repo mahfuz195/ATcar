@@ -35,7 +35,7 @@ class SonarFront:
 		elapsed = stop - start
 		self.distance = elapsed * 34000
 		self.distance = self.distance / 2
-		#print str(self.distance)
+		#print ''+str(self.distance)
 		#GPIO.cleanup()
 		return self.distance
 
