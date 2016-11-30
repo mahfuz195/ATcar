@@ -29,7 +29,7 @@ p = pwm.PWM()
 # ===========================================================================
 def setSpeed(speed):
 	speed *= 40
-	print 'speed is: ', speed
+	#print 'speed is: ', speed
 	p.set_value(EN_M0, 0, speed)
 	p.set_value(EN_M1, 0, speed)
 
