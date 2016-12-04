@@ -1,0 +1,15 @@
+0000000000000000000000000000000000000000 577886c99edc32b2e773cd8398fdcdaa24628231 pi <pi@raspberrypi.(none)> 1476802677 +0000	clone: from https://github.com/mahfuz195/ATcar
+577886c99edc32b2e773cd8398fdcdaa24628231 046f197e85b54c0283bb061051e0f7b06055c94a mahfuz195 <mahfuj.islam28@yahoo.com> 1476803442 +0000	commit: soner module added
+046f197e85b54c0283bb061051e0f7b06055c94a a11b8f27b0c9b03106f77c55cc00c1d3134e9c2a mahfuz195 <mahfuj.islam28@yahoo.com> 1476911137 +0000	commit: control module added
+a11b8f27b0c9b03106f77c55cc00c1d3134e9c2a bf1266615f5727794aaf7692157bd4a94d9370ce mahfuz195 <mahfuj.islam28@yahoo.com> 1476911257 +0000	pull origin master: Fast-forward
+bf1266615f5727794aaf7692157bd4a94d9370ce e2276ad68e9f1a483bac3dd06cf1ec93976dd011 mahfuz195 <mahfuj.islam28@yahoo.com> 1476912237 +0000	commit: intial integration of car direction with soner. bug in arduino code
+e2276ad68e9f1a483bac3dd06cf1ec93976dd011 bbb6f3ced5074d142e33af9498d76e72df49cf30 mahfuz195 <mahfuj.islam28@yahoo.com> 1478113469 +0000	pull origin master: Fast-forward
+bbb6f3ced5074d142e33af9498d76e72df49cf30 28962d88147fc130896cc2f9c39847195f1452d5 mahfuz195 <mahfuj.islam28@yahoo.com> 1478113626 +0000	commit: updated in cali server
+28962d88147fc130896cc2f9c39847195f1452d5 434a40daa53527473cab246fe26d41027f8b6156 mahfuz195 <mahfuj.islam28@yahoo.com> 1478113999 +0000	pull origin master: Fast-forward
+434a40daa53527473cab246fe26d41027f8b6156 17e3a3797c1b3fa893090873f37db62d6f9ddda6 mahfuz195 <mahfuj.islam28@yahoo.com> 1478114386 +0000	pull origin master: Fast-forward
+17e3a3797c1b3fa893090873f37db62d6f9ddda6 ec0cefa4ff339daced83726a9a197272d6a3e09b mahfuz195 <mahfuj.islam28@yahoo.com> 1478115884 +0000	commit: change in timing
+ec0cefa4ff339daced83726a9a197272d6a3e09b 1a7c4a62b9c3d774634b307547b2913a006141ec mahfuz195 <mahfuj.islam28@yahoo.com> 1478116338 +0000	pull origin master: Fast-forward
+1a7c4a62b9c3d774634b307547b2913a006141ec 675ad9b7387fd0f33de6c7634095626a90d41b25 mahfuz195 <mahfuj.islam28@yahoo.com> 1479583210 +0000	pull origin master: Fast-forward
+675ad9b7387fd0f33de6c7634095626a90d41b25 810c595e69d23fef0212062e2c7d26da9cc27031 mahfuz195 <mahfuj.islam28@yahoo.com> 1479588305 +0000	commit: leader initial model started
+810c595e69d23fef0212062e2c7d26da9cc27031 c94bbceabe04e06eba075995e944ed393d764bf9 mahfuz195 <mahfuj.islam28@yahoo.com> 1479591393 +0000	commit: parser added in follower code
+c94bbceabe04e06eba075995e944ed393d764bf9 ed2f5ababdeaffad7f12fccd01e59cdc273d2296 mahfuz195 <mahfuj.islam28@yahoo.com> 1479594284 +0000	commit: receiver model added
