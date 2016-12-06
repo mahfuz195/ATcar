@@ -162,10 +162,10 @@ def ModifiedPID():
 def PIDController():
 	error_current = 0
 	error_prev  = 0
-	al = 0
-	C = 0.95
-	Kp = 0.505 #(105/1000.0)
-	Kd = 0.5
+	al = 0.0
+	C = 5.95
+	Kp = 1.505 #(105/1000.0)
+	Kd = 2.0
 	Ki = 0.0
 	h = 0.95
 	
@@ -214,7 +214,7 @@ def PIDController():
 
 			
 			
-			if sum_avg <= 30 :
+			if sum_avg <= 25 :
 				speed=0
 				speed_prev = speed
 				motor.forward()
@@ -247,11 +247,17 @@ def PIDController():
 		dTime  = time_current - time_prev
 
 		#for simulation results
-		dTime = 1.0
+		#dTime = 1.0
 		al = float(acc_leader)
-		af = Kp * error_current + Kd * (dError/dTime) + C * al + Ki * sumError
+		Td = Kd * (dError/dTime)
+		Tp = Kp * error_current
+		Tc = C * al
+		af =  Tp + Td + Tc + (Ki * sumError)
 		
-		speed = af * dTime + speed_prev
+		
+		speed = af * 1 + speed_prev
+
+		print 'dtime:'+str(dTime)+' __dist: '+str(dist_actual)+' af: ' + str(af) + ' error: ' +str(error_current) + ' Tp: ' + str(Tp) +  ' Td: ' + str(Td) + ' Ct: ' + str(Tc) 
 
 		if (speed) >= speed_max :
 			speed = speed_max
@@ -272,7 +278,7 @@ def PIDController():
 		
 		#print 'c_dist:' + str(dist_actual) + '\tdDist:'+str(dist_desire)+ '\tspeed:' + str(speed_prev) + '\tdError:' + str(dError) + '\t dTime:' + str(dTime)
 
-		print 'speed----->' + str(speed)
+		print 'speed__________ ' + str(speed) + ' ___________'
 		
 		
 		#time.sleep()
@@ -332,7 +338,7 @@ def receiver():
 				if float(dtime) != 0 :
 					acc_leader = acc_temp
 					speed_leader = speed_temp
-					
+					#print '\n leader acc:' + str(acc_leader)
 					#print 'set speed = ' + str(speed)
 					#motor.forward()
 					#motor.setSpeed(int(float(speed.strip())))
