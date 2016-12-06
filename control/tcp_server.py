@@ -34,6 +34,7 @@ car_dir.home()
 speed_max = 60.0
 speed_min = 0.0
 speed_target = -1.0
+car_acceleration = 0.0
 
 threads = []     
 	
@@ -61,19 +62,20 @@ isObstacle      = False
 #        print 'hello'
 #        time.sleep(1)
 def CalculateCarSpeedPID():
-	global speed , speed_target , motor
+	global speed , speed_target , motor , car_acceleration
 
 	#inti speed checking
 	if(speed_target == -1.0):
 		return
 
-	print 'target speed:' + str(speed_target) + ' current speed:' + str(speed)
+	#print 'target speed:' + str(speed_target) + ' current speed:' + str(speed)
 	
 	error_current  = 0.0
 	error_prev = 0.0
 	time_current = time.time()
 	time_prev = time_current
 	temp_speed = speed
+	speed_prev = speed
 
 	# PID coefficients
 	Kp = 0.03
@@ -104,13 +106,26 @@ def CalculateCarSpeedPID():
 		speed = speed_temp
 		motor.forward()
 		motor.setSpeed(int(speed))
+		
 		#print 'motor pid speed:' + str(speed)
 
 		#init pid vaiables
 		error_current = error_prev
 		time_prev = time_current  
+
+		#calculate car_acceleration
+		delta_speed = speed - speed_prev
+		car_acceleration = (delta_speed) / delta_time
+		speed_prev = speed
+
+		print '\n' + str(time_current) + ',' + str(speed)
 		
-	
+		#if (car_acceleration < 1000) and (car_acceleration>-1000):
+			#print 'acc:' + str(car_acceleration)
+                
+		
+		
+		
 def SetPIDSpeed():
 	#start the thread here.
 	thread_3 = threading.Thread(target=CalculateCarSpeedPID)
@@ -135,7 +150,7 @@ def ObstacleDetection():
 		time_current = time.time()
 		dist_current = frontSonar.MeasureDistance()
 
-		print 'current_dist:' + str(dist_current)
+		#print 'current_dist:' + str(dist_current)
 		
 		#brute forse stop
 		if dist_current < 30 :
@@ -166,7 +181,7 @@ def ObstacleDetection():
 			count = limit
 
 		if count == 0 :
-			print 'need to stop!'
+			#print 'need to stop!'
 			speed_before_stop = speed
 			speed_target = 0
 			isCarStoped = True
@@ -185,7 +200,7 @@ def ObstacleDetection():
 					time.sleep(2)
 					isCarStoped = False
 					speed_target = speed_before_stop
-					print 'target speed:' + str(speed_before_stop)
+					#print 'target speed:' + str(speed_before_stop)
 					SetPIDSpeed()
 		#calculate the velocity
 ##                delta_dist = dist_prev - dist_current
@@ -198,10 +213,12 @@ def ObstacleDetection():
 ##                else :
 ##                        count = 3
  
-		print 'cur speed:' + str(speed_current) + " prev:" + str(speed_prev) + " count:" + str(count)
+		#print 'cur speed:' + str(speed_current) + " prev:" + str(speed_prev) + " count:" + str(count)
 		time_prev = time_current
 		dist_prev = dist_current
 		speed_prev = speed_current
+		
+		print '\n' + str(time_current) + ',' + str(speed)
 		
 		time.sleep(0.1)
 			   
@@ -275,8 +292,11 @@ def BroadcastData():
 	global vid, speed, angle , headway
 	while True:
 		if running == True:
-			data = '$' + str(vid) + ',' + str(time.time()) +','+ str(speed) +','+ str(angle) +',' + str(headway) +'#'
+			time_current = time.time()
+			#print str(time_current) + ',' + str(speed)
+			data = '$' + str(vid) + ',' + str(time.time()) +','+ str(speed) +','+ str(angle) +',' + str(headway) +','+str(car_acceleration)+'#'
 			broadcast_socket.sendto(data, broadcast_dest)
+			#print time.time()
 		time.sleep(0.2)
 
 #start broadcasting thread
@@ -290,7 +310,7 @@ thread_2.start()
 
 
 while True:
-	print 'Waiting for connection...'
+	#print 'Waiting for connection...'
 	# Waiting for connection. Once receiving a connection, the function accept() returns a separate 
 	# client socket for the subsequent communication. By default, the function accept() is a blocking 
 	# one, which means it is suspended before the connection comes.
@@ -355,9 +375,9 @@ while True:
 			numLen = len(data) - len('speed')
 			if numLen == 1 or numLen == 2 or numLen == 3:
 				tmp = data[-numLen:]
-				print 'tmp(str) = %s' % tmp
+				#print 'tmp(str) = %s' % tmp
 				spd = int(tmp)
-				print 'spd(int) = %d' % spd
+				#print 'spd(int) = %d' % spd
 				if spd < 24:
 					spd = 24
 					motor.setSpeed(spd)
