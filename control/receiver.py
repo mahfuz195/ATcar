@@ -190,14 +190,14 @@ def PIDController():
 			speed_prev = speed
 			motor.setSpeed(speed)
 			continue
-		if temp_actual < 10 :
+		if temp_actual < 5 :
 			continue
 
 		print 'dist:' + str(temp_actual)
 		#continue
 		
 		
-		if (temp_actual < 25):
+		if (temp_actual < 30):
 			print 'need to stop:'
 			if speed >= 30 :
 				speed = speed / 3
@@ -214,7 +214,7 @@ def PIDController():
 
 			
 			
-			if sum_avg <= 25 :
+			if sum_avg <= 30 :
 				speed=0
 				speed_prev = speed
 				motor.forward()
@@ -280,9 +280,9 @@ def PIDController():
 
 		print 'speed__________ ' + str(speed) + ' ___________'
 		
-		#dist_desire = 0.5 * speed
-		#if dist_desire < 30 :
-		#	dist_desire = 30
+		dist_desire = (1.0/3.0) * speed + 30
+		if dist_desire < 30 :
+			dist_desire = 30
                         
 		#time.sleep()
 
