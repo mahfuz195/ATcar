@@ -197,7 +197,7 @@ def PIDController():
 		#continue
 		
 		
-		if (temp_actual < 40):
+		if (temp_actual < 25):
 			print 'need to stop:'
 			if speed >= 30 :
 				speed = speed / 3
@@ -280,7 +280,10 @@ def PIDController():
 
 		print 'speed__________ ' + str(speed) + ' ___________'
 		
-		
+		dist_desire = 0.5 * speed
+		if dist_desire < 25 :
+                        dist_desire = 25
+                        
 		#time.sleep()
 
 		#if dist_actual < 5 :
