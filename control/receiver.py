@@ -280,9 +280,9 @@ def PIDController():
 
 		print 'speed__________ ' + str(speed) + ' ___________'
 		
-		dist_desire = (1.0/3.0) * speed + 30
-		if dist_desire < 30 :
-			dist_desire = 30
+		#dist_desire = (1.0/3.0) * speed + 30
+		#if dist_desire < 30 :
+		#	dist_desire = 30
                         
 		#time.sleep()
 
