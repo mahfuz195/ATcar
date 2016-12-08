@@ -341,12 +341,12 @@ def TimeHeadwayController():
 		if speed >= speed_max :
 			speed = speed_max
 		elif speed< speed_min:
-			speed = speed_min
+			speed = 0
 
 		print 'speed: ' + str(speed) + ' | Tp:' + str(Tp) + ' | Td: ' + str(Td) + ' | Cl: ' + str(Cl)
 
 
-		motorSpeed = 25.0 + ((speed * 7)/ 12.0)
+		#motorSpeed = 10.0 + ((speed )/ 6.0)
 		
 		motor.forward()
 		motor.setSpeed(int(motorSpeed))
