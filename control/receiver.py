@@ -322,13 +322,14 @@ def TimeHeadwayController():
 	speed = 0
 	dist_prev = frontSonar.MeasureDistance()
 	dist_actual = dist_prev
-
+	d0 = 20
+	
 	while True:
 		dist_temp = frontSonar.MeasureDistance()
 		if dist_temp > 80 :
 			continue
 		dist_real = dist_temp
-		dist_desire = speed * 0.5 + 10.0
+		dist_desire = speed * 0.5 + d0
 		
 		error_current = dist_real - dist_desire
 		Tp = Kp * error_current
