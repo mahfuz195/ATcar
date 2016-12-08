@@ -349,7 +349,7 @@ def TimeHeadwayController():
 		#motorSpeed = 10.0 + ((speed )/ 6.0)
 		
 		motor.forward()
-		motor.setSpeed(int(motorSpeed))
+		motor.setSpeed(int(speed))
 
 		speed_prev = speed
 		error_prev = error_current
