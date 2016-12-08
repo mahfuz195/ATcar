@@ -29,7 +29,7 @@ car_dir.home()
 
 speed = 0
 speed_max = 60
-speed_min = 0
+speed_min = 25
 vid = 3
 dist_desire  = 50
 dist_actual  = frontSonar.MeasureDistance()
