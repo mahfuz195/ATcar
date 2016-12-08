@@ -163,9 +163,9 @@ def PIDController():
 	error_current = 0
 	error_prev  = 0
 	al = 0.0
-	C = 5.95
-	Kp = 1.505 #(105/1000.0)
-	Kd = 2.0
+	C = 0.95
+	Kp = 0.205 #(105/1000.0)
+	Kd = 1.0
 	Ki = 0.0
 	h = 0.95
 	
@@ -178,15 +178,17 @@ def PIDController():
 	dist_prev = frontSonar.MeasureDistance()
 	dist_actual = dist_prev
 	
-	dist_desire = 40 #SafeDistance(Vprev)
+	dist_desire = 50 #SafeDistance(Vprev)
 	print 'dist:' + str(dist_actual) + '\tspeed:' + str(speed_prev) + '\t\t time:' + str(time_current)
 	sumError = 0 
 	while True:
 		time_current = time.time()
 		temp_actual = frontSonar.MeasureDistance()
 
+		
 		if temp_actual > 100 :
 			speed = speed_max
+			print 'setting motor speed = ' + str(speed)
 			speed_prev = speed
 			motor.setSpeed(speed)
 			continue
@@ -197,26 +199,32 @@ def PIDController():
 		#continue
 		
 		
-		if (temp_actual < 30):
-			print 'need to stop:'
-			if speed >= 30 :
-				speed = speed / 3
-			
+		if (temp_actual <= 40):
+			print 'in close range <= 40'
+			#if speed >= 30 :
+
+			speed = speed / 2
+
+			print 'setting motor speed = ' + str(speed)
 			speed_prev = speed
 			motor.forward()
 			motor.setSpeed(int(speed))
 
 			sum_dist = 0
-			for i in range(0,1):
-				temp = frontSonar.MeasureDistance()
-				sum_dist = sum_dist + temp
-			sum_avg = sum_dist / 1.0
+			#for i in range(0,1):
+			#	temp = frontSonar.MeasureDistance()
+			#	sum_dist = sum_dist + temp
+			#sum_avg = sum_dist / 1.0
 
 			
-			
-			if sum_avg <= 30 :
+			temp = frontSonar.MeasureDistance()
+			if temp <= 30 :
+				if( float(speed_leader) > 30) :
+					print 'leader vehicle is moving with spedd:' + str(speed_leader)
+					continue
 				speed=0
 				speed_prev = speed
+				print 'setting motor speed = ' + str(speed)
 				motor.forward()
 				motor.setSpeed(int(speed))
 				continue
@@ -246,6 +254,8 @@ def PIDController():
 		sumError = sumError + dError
 		dTime  = time_current - time_prev
 
+		if(dError > 30) :
+			dError = dError / 2 
 		#for simulation results
 		#dTime = 1.0
 		al = float(acc_leader)
@@ -257,7 +267,7 @@ def PIDController():
 		
 		speed = af * 1 + speed_prev
 
-		print 'dtime:'+str(dTime)+' __dist: '+str(dist_actual)+' af: ' + str(af) + ' error: ' +str(error_current) + ' Tp: ' + str(Tp) +  ' Td: ' + str(Td) + ' Ct: ' + str(Tc) 
+		print 'dtime:'+str(dTime)+' | dist: '+str(dist_actual)+' | af: ' + str(af) + ' | error: ' +str(error_current) + ' | Tp: ' + str(Tp) +  ' | Td: ' + str(Td) + ' | Ct: ' + str(Tc) 
 
 		if (speed) >= speed_max :
 			speed = speed_max
@@ -266,9 +276,10 @@ def PIDController():
 			
 		if speed > speed_leader:
 			speed = speed_leader
-			
+
+		print 'setting motor speed:' + str(speed)	
 		motor.forward()
-		motor.setSpeed(int(speed)-5)
+		motor.setSpeed(int(speed))
 
 		speed_prev = speed
 		error_prev  = error_current
@@ -289,14 +300,66 @@ def PIDController():
 		#if dist_actual < 5 :
 		#    motor.stop()
 		#    return
+
 		
+############# start of TimeheadwayController ###############
 		
+def TimeHeadwayController():
+	error_current = 0
+	error_prev  = 0
+	al = 0.0
+	C = 0.95
+	Kp = 0.205 #(105/1000.0)
+	Kd = 1.0
+	Ki = 0.0
+	h = 0.5
+	
+	print 'in call pid controller function'
+	global frontSonar , dist_actual , dist_desire , motor , acc_leader , speed_leader
+	time_current  = time.time()
+	time_prev = time_current
+	speed_prev = 0
+	speed = 0
+	dist_prev = frontSonar.MeasureDistance()
+	dist_actual = dist_prev
+
+	while True:
+		dist_temp = frontSonar.MeasureDistance()
+		if dist_temp > 80 :
+			continue
+		dist_real = dist_temp
+		dist_desire = speed * 0.5 + 10.0
+		
+		error_current = dist_real - dist_desire
+		Tp = Kp * error_current
+		Td = Kd * (error_current - error_prev)
+		Cl = C * float(acc_leader)
+		
+		speed = speed_prev + Tp + Td + Cl
+
+		if speed >= speed_max :
+			speed = speed_max
+		elif speed< speed_min:
+			speed = speed_min
+
+		print 'speed: ' + str(speed) + ' | Tp:' + str(Tp) + ' | Td: ' + str(Td) + ' | Cl: ' + str(Cl)
+		
+		motor.forward()
+		motor.setSpeed(int(speed))
+
+		speed_prev = speed
+		error_prev = error_current
+                
+
+############# end of TimeheadwayController ###############
+	
 threads = []       
 def CallPID():
 	print 'in call pid function' 
 	#thread_1 = threading.Thread(target=ModifiedPID)
 	#thread_1 = threading.Thread(target=AdaptiveCC)
-	thread_1 = threading.Thread(target=PIDController)
+	#thread_1 = threading.Thread(target=PIDController)
+	thread_1 = threading.Thread(target=TimeHeadwayController)
 	threads.append(thread_1)
 	thread_1.start()
 
@@ -315,13 +378,13 @@ for i in range(0,5):
 def ParseVehicleData(data):
 	if data.find('$') != -1 and data.find('#') != -1:
 		#vid , dtime , speed , angle , headway = data.split(' $#,')
-		return filter(None,re.split("[,\-!$#]",data))
+		return filter(None,re.split("[,\!$#]",data))
 		#print 'time='
 	else :
 		return [0,0,0,0,0,0]
 		
 def receiver():
-	global motor , vid , dtime , speed_leader,speed , angle, headway_leader ,acc_leader
+	global motor , vid , dtime , speed_leader ,speed , angle, headway_leader ,acc_leader
 	try:
 		my_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		my_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -341,8 +404,8 @@ def receiver():
 				if float(dtime) != 0 :
 					acc_leader = acc_temp
 					speed_leader = speed_temp
-					#print '\n leader acc:' + str(acc_leader)
-					#print 'set speed = ' + str(speed)
+					#print 'leader acc:' + str(acc_leader)
+					#print 'leader speed = ' + str(speed_leader)
 					#motor.forward()
 					#motor.setSpeed(int(float(speed.strip())))
 					
