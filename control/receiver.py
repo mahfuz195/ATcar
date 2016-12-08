@@ -344,9 +344,12 @@ def TimeHeadwayController():
 			speed = speed_min
 
 		print 'speed: ' + str(speed) + ' | Tp:' + str(Tp) + ' | Td: ' + str(Td) + ' | Cl: ' + str(Cl)
+
+
+		motorSpeed = 25.0 + ((speed * 7)/ 12.0)
 		
 		motor.forward()
-		motor.setSpeed(int(speed))
+		motor.setSpeed(int(motorSpeed))
 
 		speed_prev = speed
 		error_prev = error_current
