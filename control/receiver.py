@@ -29,7 +29,7 @@ car_dir.home()
 
 speed = 0
 speed_max = 60
-speed_min = 25
+speed_min = 0
 vid = 3
 dist_desire  = 50
 dist_actual  = frontSonar.MeasureDistance()
@@ -163,7 +163,7 @@ def PIDController():
 	error_current = 0
 	error_prev  = 0
 	al = 0.0
-	C = 0.95
+	C = 0.50
 	Kp = 0.205 #(105/1000.0)
 	Kd = 1.0
 	Ki = 0.0
@@ -308,11 +308,11 @@ def TimeHeadwayController():
 	error_current = 0
 	error_prev  = 0
 	al = 0.0
-	C = 0.95
+	C = 0.8
 	Kp = 0.205 #(105/1000.0)
 	Kd = 1.0
 	Ki = 0.0
-	h = 0.5
+	h = 0.7
 	
 	print 'in call pid controller function'
 	global frontSonar , dist_actual , dist_desire , motor , acc_leader , speed_leader
@@ -340,10 +340,10 @@ def TimeHeadwayController():
 
 		if speed >= speed_max :
 			speed = speed_max
-		elif speed< speed_min:
-			speed = 0
-
-		print 'speed: ' + str(speed) + ' | Tp:' + str(Tp) + ' | Td: ' + str(Td) + ' | Cl: ' + str(Cl)
+		elif speed < speed_min:
+			speed = speed_min
+                        
+		print 'speed:(' +  str(int(speed))+') | Tp:' + str(Tp) + ' | Td: ' + str(Td) + ' | Cl: ' + str(Cl)
 
 
 		#motorSpeed = 10.0 + ((speed )/ 6.0)
