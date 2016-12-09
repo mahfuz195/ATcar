@@ -100,6 +100,7 @@ def AdaptiveCC():
 		elif speed <= speed_min:
 			speed = speed_min
 
+
 		#set motor speed
 		motor.forward()
 		motor.setSpeed(int(speed))
@@ -147,7 +148,7 @@ def ModifiedPID():
 			speed = speed_temp
 
 
-                        
+			
 		#change the motor
 		motor.forward()
 		motor.setSpeed(int(speed)-5 )
@@ -294,7 +295,7 @@ def PIDController():
 		#dist_desire = (1.0/3.0) * speed + 30
 		#if dist_desire < 30 :
 		#	dist_desire = 30
-                        
+			
 		#time.sleep()
 
 		#if dist_actual < 5 :
@@ -308,11 +309,11 @@ def TimeHeadwayController():
 	error_current = 0
 	error_prev  = 0
 	al = 0.0
-	C = 0.8
+	C = 0.7
 	Kp = 0.205 #(105/1000.0)
 	Kd = 1.0
 	Ki = 0.0
-	h = 0.7
+	h = 0.5
 	
 	print 'in call pid controller function'
 	global frontSonar , dist_actual , dist_desire , motor , acc_leader , speed_leader
@@ -326,7 +327,10 @@ def TimeHeadwayController():
 	
 	while True:
 		dist_temp = frontSonar.MeasureDistance()
-		if dist_temp > 80 :
+		if dist_temp >80 :
+			print 'larger dist:' + str(int(dist_temp))
+			continue
+		if dist_temp  < 10 :
 			continue
 		dist_real = dist_temp
 		dist_desire = speed * 0.5 + d0
@@ -342,7 +346,9 @@ def TimeHeadwayController():
 			speed = speed_max
 		elif speed < speed_min:
 			speed = speed_min
-                        
+
+		print 'd_real:' + str(int(dist_temp)) + ' d_desire:' + str(int(dist_desire))
+		
 		print 'speed:(' +  str(int(speed))+') | Tp:' + str(Tp) + ' | Td: ' + str(Td) + ' | Cl: ' + str(Cl)
 
 
@@ -353,7 +359,7 @@ def TimeHeadwayController():
 
 		speed_prev = speed
 		error_prev = error_current
-                
+		
 
 ############# end of TimeheadwayController ###############
 	
