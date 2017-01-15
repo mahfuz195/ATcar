@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import RPi.GPIO as GPIO
 import PCA9685 as pwm
+import serial 
 import time    # Import necessary modules
 
 # ===========================================================================
@@ -22,11 +23,13 @@ EN_M1    = 5  # servo driver IC CH5
 pins = [Motor0_A, Motor0_B, Motor1_A, Motor1_B]
 
 p = pwm.PWM()
-
+ser = serial.Serial('/dev/ttyACM0',9600)
+        
 # ===========================================================================
 # Adjust the duty cycle of the square waves output from channel 4 and 5 of
 # the servo driver IC, so as to control the speed of the car.
 # ===========================================================================
+
 def setSpeed(speed):
 	speed *= 40
 	#print 'speed is: ', speed
@@ -131,16 +134,48 @@ def test():
 		ctrl(1)
 		time.sleep(3)
 		setSpeed(10)
+		getSpeed()
 		time.sleep(3)
 		setSpeed(100)
 		time.sleep(3)
-		ctrl(0)
+		getSpeed()
 
+		ctrl(0)
+def isfloat(value):
+	try :
+		float(value)
+		return True
+	except :
+		return False 
+		
+def getSpeed():
+        global ser
+        read_serial = ser.readline()
+        if "P" in read_serial :
+                print 'text data'
+        else :
+                if isfloat(read_serial) :
+                        real_spd = float(read_serial)
+                        if(real_spd < 90.0):
+                                print 'read+speed = ' + str(real_spd)
+                                return real_spd
+def pid_speed():
+        return 
+	
 if __name__ == '__main__':
 	setup()
-	setSpeed(10)
+	#test()
+	setSpeed(60)
+	#getSpeed()
+	#getSpeed()
+	#getSpeed()
 	forward()
 	time.sleep(3)
-	backward()
+	#backward()
 	time.sleep(2)
 	stop()
+	setSpeed(40)
+	#forward()
+	#getSpeed()
+	#getSpeed()
+	#getSpeed()

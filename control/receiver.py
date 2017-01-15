@@ -12,6 +12,8 @@ import threading
 from sonar_front import *
 import motor
 import sys
+import real_speed
+
 
 motor.setup() 
 frontSonar = SonarFront()
@@ -327,8 +329,11 @@ def TimeHeadwayController():
 	
 	while True:
 		dist_temp = frontSonar.MeasureDistance()
-		if dist_temp >80 :
+		if dist_temp >150 :
 			print 'larger dist:' + str(int(dist_temp))
+			speed = int(float(speed_leader))
+			motor.forward()
+			motor.setSpeed(int(speed))
 			continue
 		if dist_temp  < 10 :
 			continue
@@ -339,6 +344,7 @@ def TimeHeadwayController():
 		Tp = Kp * error_current
 		Td = Kd * (error_current - error_prev)
 		Cl = C * float(acc_leader)
+
 		
 		speed = speed_prev + Tp + Td + Cl
 
@@ -346,17 +352,28 @@ def TimeHeadwayController():
 			speed = speed_max
 		elif speed < speed_min:
 			speed = speed_min
-
-		print 'd_real:' + str(int(dist_temp)) + ' d_desire:' + str(int(dist_desire))
+		#print 'd_real:' + str(int(dist_temp)) + ' d_desire:' + str(int(dist_desire))
 		
-		print 'speed:(' +  str(int(speed))+') | Tp:' + str(Tp) + ' | Td: ' + str(Td) + ' | Cl: ' + str(Cl)
+		#print 'speed:(' +  str(int(speed))+') | Tp:' + str(Tp) + ' | Td: ' + str(Td) + ' | Cl: ' + str(Cl)
 
 
 		#motorSpeed = 10.0 + ((speed )/ 6.0)
 		
 		motor.forward()
-		motor.setSpeed(int(speed))
+		# here goes the pid_controller
+		
+		#r_speed = real_speed.getSpeed()
+		#target_speed = speed
 
+			
+                                
+		#motor.setSpeed(int(speed))
+		print '(' + str(time.time())+',' + str(dist_real)+ ','+ str(speed) + ')'  
+		if(speed >20):
+			real_speed.setSpeed(speed)
+		else :
+			real_speed.setSpeed(0)
+		
 		speed_prev = speed
 		error_prev = error_current
 		
@@ -418,8 +435,8 @@ def receiver():
 					#print 'leader speed = ' + str(speed_leader)
 					#motor.forward()
 					#motor.setSpeed(int(float(speed.strip())))
-					
-				   
+
+									   
 	except ValueError:
 		print 'exception in comm::receiver() value error'
 	except :
@@ -429,8 +446,11 @@ def receiver():
 if __name__ == "__main__" :
 	CallPID()
 	receiver()
-	#motor.forward()
-	#motor.setSpeed(0)
+	motor.forward()
+	motor.setSpeed(30)
+	time.sleep(3)
+	print str(real_speed.getSpeed())
+	
 	
 	#data = "$1,20.3,24,90,61.2#"
 	#ParseVehicleData(data)
