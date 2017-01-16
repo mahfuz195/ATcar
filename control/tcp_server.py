@@ -9,6 +9,9 @@ import time
 import select
 import threading
 from sonar_front import *
+import real_speed
+
+real_speed.setup()
 
 frontSonar = SonarFront()
 
@@ -24,6 +27,7 @@ tcpSerSock.bind(ADDR)    # Bind the IP address and port number of the server.
 tcpSerSock.listen(5)     # The parameter of listen() defines the number of connections permitted at one time. Once the 
 			 # connections are full, others will be rejected. 
 #tcpSerSock.setblocking(0)
+
 
 video_dir.setup()
 car_dir.setup()
@@ -84,6 +88,7 @@ def CalculateCarSpeedPID():
 	while True :
 		time_current = time.time()
 		if (speed_target < speed +1) and (speed_target > speed-1):
+			car_acceleration = 0.0
 			return
 		error_current = speed_target - speed
 		delta_error = error_current - error_prev
@@ -104,8 +109,8 @@ def CalculateCarSpeedPID():
 
 		#run motor        
 		speed = speed_temp
-		motor.forward()
-		motor.setSpeed(int(speed))
+		#motor.forward()
+		#motor.setSpeed(int(speed))
 		
 		#print 'motor pid speed:' + str(speed)
 
@@ -118,10 +123,16 @@ def CalculateCarSpeedPID():
 		car_acceleration = (delta_speed) / delta_time
 		speed_prev = speed
 
-		print '\n' + str(time_current) + ',' + str(speed)
+		real_speed.setSpeed(speed)
+		print 'applied speed=' + str(real_speed.getSpeed())
 		
-		#if (car_acceleration < 1000) and (car_acceleration>-1000):
-			#print 'acc:' + str(car_acceleration)
+		print '\n(' + str(time_current) + ',' + str(speed) + ' , ' + str(car_acceleration)  + ' )'
+
+		#print '\m car accelarations:' + str(car_acceleration)
+		
+		if (float(car_acceleration) > 1000) or (float(car_acceleration)<-1000):
+			car_acceleration = 0
+		#print 'acc:' + str(car_acceleration)
                 
 		
 		
@@ -156,11 +167,11 @@ def ObstacleDetection():
 		if dist_current < 30 :
 			#make sure if this is correct result or not
 			dist_sum = 0
-			for i in range(0,3):
+			for i in range(0,2):
 				dist_temp = frontSonar.MeasureDistance()
 				dist_sum = dist_sum + dist_temp
 				
-			dist_avg = dist_sum / 3.0
+			dist_avg = dist_sum / 2.0
 			
 			#if this is below 30 then assumed to be correct data.
 			if dist_avg < 30 :
@@ -200,6 +211,7 @@ def ObstacleDetection():
 					time.sleep(2)
 					isCarStoped = False
 					speed_target = speed_before_stop
+					#real_speed.setSpeed(speed_target)
 					#print 'target speed:' + str(speed_before_stop)
 					SetPIDSpeed()
 		#calculate the velocity
@@ -218,7 +230,7 @@ def ObstacleDetection():
 		dist_prev = dist_current
 		speed_prev = speed_current
 		
-		print '\n' + str(time_current) + ',' + str(speed)
+		#print '\n' + str(time_current) + ',' + str(speed)
 		
 		time.sleep(0.1)
 			   
@@ -288,7 +300,7 @@ def ObstacleDetection():
 
 def BroadcastData():
 	print 'in Broadcast thread'
-	global broadcast_socket , broadcast_dest , running
+	global broadcast_socket , broadcast_dest , running, car_acceleration
 	global vid, speed, angle , headway
 	while True:
 		if running == True:
@@ -302,11 +314,11 @@ def BroadcastData():
 #start broadcasting thread
 thread_1 = threading.Thread(target=BroadcastData)
 threads.append(thread_1)
-thread_2 = threading.Thread(target=ObstacleDetection)
-threads.append(thread_2)
+#thread_2 = threading.Thread(target=ObstacleDetection)
+#threads.append(thread_2)
 
 thread_1.start()
-thread_2.start()
+#thread_2.start()
 
 
 while True:
@@ -348,7 +360,8 @@ while True:
 			#motor.ctrl(0)
 			spd = 0
 			speed_target = spd
-			SetPIDSpeed()
+			real_speed.setSpeed(0)
+			#SetPIDSpeed()
 			#speed = 0
 			#spd = 0
 		elif data == ctrl_cmd[5]:
@@ -382,10 +395,12 @@ while True:
 					spd = 24
 					motor.setSpeed(spd)
 					speed = spd
+					real_speed.setSpeed(0)
 
 				else :
 					speed_target = spd
-					SetPIDSpeed()
+					real_speed.setSpeed(spd)
+					#SetPIDSpeed()
 				#motor.setSpeed(spd)
 				#speed = spd
 				
@@ -403,6 +418,8 @@ while True:
 			try:
 				spd = int(spd)
 				motor.forward(spd)
+				real_speed.setSpeed(spd)
+				
 			except:
 				print 'Error speed =', spd
 		elif data[0:9] == 'backward=':
