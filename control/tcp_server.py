@@ -305,9 +305,10 @@ def BroadcastData():
 	while True:
 		if running == True:
 			time_current = time.time()
-			#print str(time_current) + ',' + str(speed)
-			data = '$' + str(vid) + ',' + str(time.time()) +','+ str(speed) +','+ str(angle) +',' + str(headway) +','+str(car_acceleration)+'#'
+			r_speed = real_speed.getSpeed()
+			data = '$' + str(vid) + ',' + str(time.time()) +','+ str(r_speed) +','+ str(angle) +',' + str(headway) +','+str(car_acceleration)+'#'
 			broadcast_socket.sendto(data, broadcast_dest)
+			print str(time_current) + ',' + str(r_speed)
 			#print time.time()
 		time.sleep(0.2)
 
