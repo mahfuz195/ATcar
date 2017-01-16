@@ -14,6 +14,7 @@ import motor
 import sys
 import real_speed
 
+real_speed.setup()
 
 motor.setup() 
 frontSonar = SonarFront()
@@ -369,10 +370,12 @@ def TimeHeadwayController():
                                 
 		#motor.setSpeed(int(speed))
 		print '(' + str(time.time())+',' + str(dist_real)+ ','+ str(speed) + ')'  
-		if(speed >20):
-			real_speed.setSpeed(speed)
-		else :
-			real_speed.setSpeed(0)
+		#if(speed):
+			#real_speed.setSpeed(speed)
+		#else :
+		#	real_speed.setSpeed(0)
+
+		
 		
 		speed_prev = speed
 		error_prev = error_current
@@ -386,9 +389,9 @@ def CallPID():
 	#thread_1 = threading.Thread(target=ModifiedPID)
 	#thread_1 = threading.Thread(target=AdaptiveCC)
 	#thread_1 = threading.Thread(target=PIDController)
-	thread_1 = threading.Thread(target=TimeHeadwayController)
-	threads.append(thread_1)
-	thread_1.start()
+	#thread_1 = threading.Thread(target=TimeHeadwayController)
+	#threads.append(thread_1)
+	#thread_1.start()
 
 
 
@@ -423,33 +426,36 @@ def receiver():
 		while True :
 			message , address = my_socket.recvfrom(8192)
 			#this is for testing
-			#message = "$1,20.3,24,90,61.2#"
+			#message = "$1,20.3,30,90,61.2,0#"
 			vid , dtime , speed_temp , angle , headway , acc_temp = ParseVehicleData(message)
-			#print 'vid=' + str(vid) + ' time=' + str(dtime) + ' speed=' + str(speed) + ' acc=' + str(acc)
+			print 'vid=' + str(vid) + ' time=' + str(dtime) + ' speed=' + str(speed_temp) + ' acc=' + str(acc_temp)
 			if int(vid) == vid_leader :
 				#print 'data from leader!'
 				if float(dtime) != 0 :
 					acc_leader = acc_temp
 					speed_leader = speed_temp
+					real_speed.setSpeed(float(speed_leader))
 					#print 'leader acc:' + str(acc_leader)
 					#print 'leader speed = ' + str(speed_leader)
 					#motor.forward()
 					#motor.setSpeed(int(float(speed.strip())))
 
 									   
-	except ValueError:
+	except ValueError,ex:
+		print str(ex)
 		print 'exception in comm::receiver() value error'
-	except :
+	except Exception,e :
 		print 'exception in comm::receiver()' + str(sys.exc_info()[0])
+		print str(e)
 		
 				
 if __name__ == "__main__" :
 	CallPID()
 	receiver()
-	motor.forward()
-	motor.setSpeed(30)
-	time.sleep(3)
-	print str(real_speed.getSpeed())
+	#motor.forward()
+	#motor.setSpeed(30)
+	#time.sleep(3)
+	#print str(real_speed.getSpeed())
 	
 	
 	#data = "$1,20.3,24,90,61.2#"

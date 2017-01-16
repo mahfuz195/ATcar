@@ -31,14 +31,16 @@ def CollectSpeed():
       while True:
         read_serial = ser.readline()
         #s[0] = str(float(ser.readline()))
-  #     print read_serial
+        print read_serial
         if "P" in read_serial :
                 print 'spp'
         elif "," in read_serial:
-                real_speed , real_time = filter(None,re.split("[,\!$#]",read_serial))
-                if isfloat(real_speed):
-                        #if(real_speed<90):
-                        print ' real_speed = ' + str(float(real_speed)) + " time=" + str(real_time)
+                try:
+                        real_speed , real_time = filter(None,re.split("[,\!$#]",read_serial))
+                        if isfloat(real_speed):
+                                print ' real_speed = ' + str(float(real_speed)) + " time=" + str(real_time)
+                except :
+                        print 'error'
  
                 #if isfloat(read_serial) :
                 #       speed = float(read_serial)# speed = float(read_serial.rstrip())
@@ -47,15 +49,11 @@ def CollectSpeed():
                 #               #print 'real_speed == ' + str(speed)
                 #               real_speed = speed
                                
+#setup()
+#setSpeed(60)
+#time.sleep(5)
+#getSpeed()
+#setSpeed(50)
+#time.sleep(5)
+#getSpeed()
 
-setSpeed(60)
-time.sleep(1)
-getSpeed()
-setSpeed(00)
-time.sleep(5)
-getSpeed()
-
-
-
-
-		
