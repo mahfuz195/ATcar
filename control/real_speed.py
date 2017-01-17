@@ -39,8 +39,8 @@ def CollectSpeed():
                         real_speed , real_time = filter(None,re.split("[,\!$#]",read_serial))
                         if isfloat(real_speed):
                                 print ' real_speed = ' + str(float(real_speed)) + " time=" + str(real_time)
-                except :
-                        print 'error'
+                except Exception, e:
+                        print str(e)
  
                 #if isfloat(read_serial) :
                 #       speed = float(read_serial)# speed = float(read_serial.rstrip())

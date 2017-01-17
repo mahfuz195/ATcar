@@ -16,6 +16,8 @@ import real_speed
 
 real_speed.setup()
 
+
+
 motor.setup() 
 frontSonar = SonarFront()
 
@@ -323,23 +325,26 @@ def TimeHeadwayController():
 	time_current  = time.time()
 	time_prev = time_current
 	speed_prev = 0
-	speed = 0
+	speed = float(real_speed.getSpeed())
 	dist_prev = frontSonar.MeasureDistance()
 	dist_actual = dist_prev
-	d0 = 20
+	d0 = 40
 	
 	while True:
 		dist_temp = frontSonar.MeasureDistance()
 		if dist_temp >150 :
 			print 'larger dist:' + str(int(dist_temp))
 			speed = int(float(speed_leader))
-			motor.forward()
-			motor.setSpeed(int(speed))
+			#motor.forward()
+			#motor.setSpeed(int(speed))
+			real_speed.setSpeed(float(speed))
+			
 			continue
 		if dist_temp  < 10 :
+			real_speed.setSpeed(0)
 			continue
 		dist_real = dist_temp
-		dist_desire = speed * 0.5 + d0
+		dist_desire = float(real_speed.getSpeed()) * 0.5 + d0
 		
 		error_current = dist_real - dist_desire
 		Tp = Kp * error_current
@@ -370,13 +375,10 @@ def TimeHeadwayController():
                                 
 		#motor.setSpeed(int(speed))
 		print '(' + str(time.time())+',' + str(dist_real)+ ','+ str(speed) + ')'  
-		#if(speed):
-			#real_speed.setSpeed(speed)
-		#else :
-		#	real_speed.setSpeed(0)
-
-		
-		
+		if(speed >20):
+			real_speed.setSpeed(float(speed))
+		else :
+			real_speed.setSpeed(float(0))
 		speed_prev = speed
 		error_prev = error_current
 		
@@ -389,9 +391,9 @@ def CallPID():
 	#thread_1 = threading.Thread(target=ModifiedPID)
 	#thread_1 = threading.Thread(target=AdaptiveCC)
 	#thread_1 = threading.Thread(target=PIDController)
-	#thread_1 = threading.Thread(target=TimeHeadwayController)
-	#threads.append(thread_1)
-	#thread_1.start()
+	thread_1 = threading.Thread(target=TimeHeadwayController)
+	threads.append(thread_1)
+	thread_1.start()
 
 
 
@@ -403,7 +405,7 @@ for i in range(0,5):
 #motor.setSpeed(0)
 #while True:
 #    print 'hello'
-#    time.sleep(1)
+TimeHeadwayController#    time.sleep(1)
 
 def ParseVehicleData(data):
 	if data.find('$') != -1 and data.find('#') != -1:
@@ -426,27 +428,27 @@ def receiver():
 		while True :
 			message , address = my_socket.recvfrom(8192)
 			#this is for testing
-			#message = "$1,20.3,30,90,61.2,0#"
+			#message = "$1,20.3,24,90,61.2#"
 			vid , dtime , speed_temp , angle , headway , acc_temp = ParseVehicleData(message)
-			print 'vid=' + str(vid) + ' time=' + str(dtime) + ' speed=' + str(speed_temp) + ' acc=' + str(acc_temp)
+			#print 'vid=' + str(vid) + ' time=' + str(dtime) + ' speed=' + str(speed) + ' acc=' + str(acc)
 			if int(vid) == vid_leader :
 				#print 'data from leader!'
 				if float(dtime) != 0 :
 					acc_leader = acc_temp
 					speed_leader = speed_temp
-					real_speed.setSpeed(float(speed_leader))
+					#real_speed.setSpeed(float(speed_leader))
 					#print 'leader acc:' + str(acc_leader)
 					#print 'leader speed = ' + str(speed_leader)
 					#motor.forward()
 					#motor.setSpeed(int(float(speed.strip())))
 
 									   
-	except ValueError,ex:
-		print str(ex)
+	except ValueError ,e :
 		print 'exception in comm::receiver() value error'
-	except Exception,e :
-		print 'exception in comm::receiver()' + str(sys.exc_info()[0])
 		print str(e)
+	except Exception , ex :
+		print str(ex)
+		print 'exception in comm::receiver()' + str(sys.exc_info()[0])
 		
 				
 if __name__ == "__main__" :
